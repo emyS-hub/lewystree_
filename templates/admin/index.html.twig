@@ -1,0 +1,51 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+	<div class="container">
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success">
+				{{ message }}
+			</div>
+		{% endfor %}
+
+		<h1>Dashboard</h1>
+
+		<a href="{{ path('admin_create') }}" class="btn btn-outline-success mb-3" id="index">
+			<i class="fas fa-plus"></i>
+		</a>
+
+		<table class="table striped">
+			<thead>
+				<tr>
+					<th>Icône</th>
+					<th>Titre</th>
+					<th>Url</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for link in links %}
+					<tr>
+						<td>{{ link.icon }}</td>
+						<td>{{ link.title }}</td>
+						<td>{{ link.url }}</td>
+						<td>
+							<a href="{{ path('admin_edit', {id: link.id}) }}" class="btn btn-info" id="index">
+								<i class="fas fa-edit"></i>
+							</a>
+
+
+							<form method="POST" action="{{ path('admin_delete', {id: link.id}) }}" style="display: inline-block;" onsubmit="return confirm('Confirmation de votre suppression')">
+								<input type="hidden" name="_method" value="DELETE">
+								<input type="hidden" name="_token" value="{{ csrf_token('token_id') }}">
+								<button class="btn btn-danger" id="index">
+									<i class="far fa-trash-alt"></button>
+								</form>
+							</td>
+						</td>
+					</tr>
+				</td>
+			</tbody>
+		</tr>
+	{% endfor %}
+</tbody></table></div>{% endblock %}

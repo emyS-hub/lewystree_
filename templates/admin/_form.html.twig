@@ -1,0 +1,18 @@
+{{form_start(formLink)}}
+
+<div class="col-md-4">
+	{{ form_row(formLink.icon)}}
+</div>
+
+<div class="col-md-4">
+	{{ form_row(formLink.title)}}
+</div>
+
+<div class="col-md-4">
+	{{ form_row(formLink.url)}}
+</div>
+
+{{ form_rest(formLink)}}
+<input type="submit" class="btn btn-success" value="Ajouter">
+<input type="reset" class="btn btn-secondary" value="Annuler">
+{{form_end(formLink)}}
