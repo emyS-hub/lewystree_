@@ -10,6 +10,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -30,40 +32,69 @@ class AddAdminCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Créer un admin en base de données')
             ->addArgument('username', InputArgument::REQUIRED, 'Identifiant admin')
-            ->addArgument('plainPassword', InputArgument::REQUIRED, 'Mot de passe admin')
-            ->addArgument('roles', InputArgument::REQUIRED, 'Role user');
+            ->addArgument('plainPassword', InputArgument::REQUIRED, 'Mot de passe admin');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
-        $io = new SymfonyStyle($input, $output);
+        $this->io = new SymfonyStyle($input, $output);
+    }
 
+    protected function interact(InputInterface $input, OutputInterface $output): void
+    {
+        $this->io->section("Ajout d'un user en base de données");
+        $this->enterUsername($input, $output);
+        $this->enterPassword($input, $output);
+    }
+
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         $username = $input->getArgument('username');
+
         $plainPassword = $input->getArgument('plainPassword');
 
-        if ($username & $plainPassword) {
+        $user = new User();
 
-            $user = new User();
+        $user->setUsername($username)
+            ->setPassword($this->encoder->encodePassword($user, $plainPassword))
+            ->setRoles(["ROLE_ADMIN"]);
 
-            $user->setUsername($username)
-                ->setPassword($this->encoder->encodePassword($user, $plainPassword));
-
-            $this->em->persist($user);
-            $this->em->flush();
-
-            $io->note(sprintf('You passed an argument: %s as the username', $username));
-            $io->note(sprintf('You passed an argument: %s as the password', $plainPassword));
-        }
-
-        $io->success('Un nouvel administrateur est inscrit en base de données');
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        $this->io->success("Un nouvel administrateur est inscrit en base de données");
 
         return Command::SUCCESS;
+    }
+
+    private function enterUsername(InputInterface $input, OutputInterface $output): void
+    {
+        $helper = $this->getHelper('question');
+
+        $usernameQuestion = new Question("Identifiant User :");
+
+        $username = $helper->ask($input, $output, $usernameQuestion);
+
+        $input->setArgument('username', $username);
+    }
+
+    private function enterPassword(InputInterface $input, OutputInterface $output): void
+    {
+        $helper = $this->getHelper('question');
+
+        $passwordQuestion = new Question("Mot de passe User :");
+
+        $passwordQuestion->setHidden(True)
+            ->setHiddenFallback(False);
+
+        $password = $helper->ask($input, $output, $passwordQuestion);
+
+        $input->setArgument('plainPassword', $password);
     }
 }
 
