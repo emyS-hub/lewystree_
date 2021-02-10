@@ -30,7 +30,7 @@ class AddAdminCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Créer un admin en base de données')
