@@ -30,7 +30,7 @@ class AddAdminCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
+    protected function configure()
     {
         $this
             ->setDescription('Créer un admin en base de données')
@@ -51,8 +51,7 @@ class AddAdminCommand extends Command
             $user = new User();
 
             $user->setUsername($username)
-                ->setPassword($this->encoder->encodePassword($user, $plainPassword))
-                ->setRoles(["ROLE_ADMIN"]);
+                ->setPassword($this->encoder->encodePassword($user, $plainPassword));
 
             $this->em->persist($user);
             $this->em->flush();
