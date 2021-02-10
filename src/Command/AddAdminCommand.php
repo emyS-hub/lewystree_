@@ -35,7 +35,8 @@ class AddAdminCommand extends Command
         $this
             ->setDescription('Créer un admin en base de données')
             ->addArgument('username', InputArgument::REQUIRED, 'Identifiant admin')
-            ->addArgument('plainPassword', InputArgument::REQUIRED, 'Mot de passe admin');
+            ->addArgument('plainPassword', InputArgument::REQUIRED, 'Mot de passe admin')
+            ->addArgument('roles', InputArgument::REQUIRED, 'Role user');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
